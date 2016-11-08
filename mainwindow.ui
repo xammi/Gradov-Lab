@@ -24,20 +24,17 @@
        </font>
       </property>
       <property name="text">
-       <string>Получение целевой функции для варианта кольцевой трубы: U(R, phi)</string>
+       <string>Получение целевой функции для варианта кольцевой трубы: U(x, z)</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="workspace">
+     <widget class="QCustomPlot" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: white;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -51,6 +48,14 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QFrame</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
