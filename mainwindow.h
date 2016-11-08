@@ -11,12 +11,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+public slots:
+    void recalculate();
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    void set_equation();
-    void resolve();
 
 private:
     Ui::MainWindow *ui;
