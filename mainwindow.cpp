@@ -32,8 +32,8 @@ void MainWindow::recalculate() {
     double Hx = A / Nx, Hz = B / Nz;
 
     Doubles2D lambdas;
-    Resources::init_lambdas(U0, lambdas);
-    qDebug() << lambdas[0][0];
+    Resources::init_lambdas(U0, Nx, Nz, lambdas);
+    qDebug() << lambdas[0][0] << lambdas.size() << lambdas[0].size();
 
     //TODO: solve task
     ui->error->setText("");

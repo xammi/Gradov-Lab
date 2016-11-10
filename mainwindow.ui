@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>651</width>
-    <height>567</height>
+    <height>212</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,16 +26,6 @@
       </property>
       <property name="text">
        <string>Получение целевой функции для варианта кольцевой трубы: U(x, z)</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCustomPlot" name="U" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
       </property>
      </widget>
     </item>
@@ -365,14 +355,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

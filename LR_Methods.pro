@@ -14,12 +14,10 @@ CONFIG += c++11
 
 
 SOURCES += main.cpp\
-    qcustomplot.cpp\
     mainwindow.cpp\
     interpolation.cpp
 
 HEADERS  += mainwindow.h\
-            qcustomplot.h\
             interpolation.h \
     resources.h
 
