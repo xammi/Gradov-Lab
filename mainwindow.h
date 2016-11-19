@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "resources.h"
 
 namespace Ui {
     class MainWindow;
@@ -17,6 +18,9 @@ public slots:
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    void recalculate_action(Doubles2D & Ts) throw (QString);
+    void resolve_gauss(Doubles2D & matrix, Doubles2D & Ts);
 
 private:
     Ui::MainWindow *ui;
