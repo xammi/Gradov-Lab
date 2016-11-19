@@ -36,11 +36,18 @@ struct Resources {
         return F0 * exp(-calc_absorb(T) * Z);
     }
 
-    static double init_lambdas(double U0, int Nx, int Nz, Doubles2D & lambdas) throw (QString) {
+    static void init_lambdas(double U0, int Nx, int Nz, Doubles2D & lambdas) throw (QString) {
         double start_lambda = Resources::calc_lambda(U0);
         Doubles lambda_row;
         lambda_row.fill(start_lambda, Nx);
         lambdas.fill(lambda_row, Nz);
+    }
+
+    static void init_Ts(int Nx, int Nz, Doubles2D & Ts) {
+        double start_T = 0.0;
+        Doubles Ts_row;
+        Ts_row.fill(start_Ts, Nx);
+        Ts.fill(Ts_row, Nz);
     }
 
 };

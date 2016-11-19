@@ -33,7 +33,10 @@ void MainWindow::recalculate() {
 
     Doubles2D lambdas;
     Resources::init_lambdas(U0, Nx, Nz, lambdas);
-    qDebug() << lambdas[0][0] << lambdas.size() << lambdas[0].size();
+
+    Doubles2D Ts, prev_Ts;
+    Resources::init_Ts(Nx, Nz, Ts);
+    Resources::init_Ts(Nx, Nz, prev_Ts);
 
     //TODO: solve task
     ui->error->setText("");
