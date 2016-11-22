@@ -20,10 +20,12 @@ public:
     ~MainWindow();
 
     void recalculate_action(Doubles2D & Ts) throw (QString);
-    void resolve_gauss(Doubles2D & matrix, Doubles2D & Ts);
+    void resolve_gauss(Doubles2D & matrix, Doubles2D & Ts) throw (QString) ;
+    void view_result(Doubles2D & Ts);
 
 private:
     Ui::MainWindow *ui;
+    Resources rs;
 };
 
 #endif // MAINWINDOW_H

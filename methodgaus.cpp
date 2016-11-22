@@ -1,4 +1,5 @@
 #include "methodgaus.h"
+#include <qmath.h>
 
 QVector<double> methodGaus::calculate()
     throw (QString)
@@ -11,7 +12,7 @@ QVector<double> methodGaus::calculate()
 
         //Вырожденный случай, что данная переменная может принимать произвольное значение
         //-----------------------------------------------
-        if (abs (matrix[maxIndexRow][currentRow]) < eps)
+        if (fabs (matrix[maxIndexRow][currentRow]) < eps)
              throw QString("Решение получить невозможно из-за нулевого диагонального элемента");
         //-----------------------------------------------
         //Меняем местами строки в матрице
@@ -21,7 +22,7 @@ QVector<double> methodGaus::calculate()
         for (int i = currentRow; i < matrix.size(); i++)
         {
             double temp = matrix[i][currentRow];
-            if (abs(temp) < eps)
+            if (fabs(temp) < eps)
                 continue; // для нулевого коэффициента пропустить
             for (int j = 0; j < matrix[0].size(); j++)
             {
@@ -53,12 +54,12 @@ QVector<double> methodGaus::calculate()
 int methodGaus::searchMaxInCurrentColumn(int currentRow)
 {
     int maxIndexRow = currentRow;
-    double maxElement = abs(matrix[currentRow][currentRow]);
+    double maxElement = fabs(matrix[currentRow][currentRow]);
 
     for (int i = currentRow + 1; i < matrix.size(); i++)
-        if (abs(matrix[i][currentRow]) > maxElement)
+        if (fabs(matrix[i][currentRow]) > maxElement)
         {
-            maxElement = abs(matrix[i][currentRow]);
+            maxElement = fabs(matrix[i][currentRow]);
             maxIndexRow = i;
         }
 
