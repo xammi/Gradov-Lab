@@ -14,7 +14,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::recalculate() {
-    ui->T->clearContents();
+    ui->T->setText("");
     ui->pb->setValue(0);
     try {
         Doubles2D Ts;
@@ -117,8 +117,6 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
 }
 
 void MainWindow::view_result(Doubles2D &Ts) {
-    ui->T->setRowCount(Ts.count());
-
     double A = ui->A->value(), B = ui->B->value();
     int Nx = ui->Nx->value(), Nz = ui->Nz->value();
     double Hx = A / Nx, Hz = B / Nz;
@@ -127,9 +125,7 @@ void MainWindow::view_result(Doubles2D &Ts) {
     for (double X = 0.0; X < A; X += Hx) {
         J = 0;
         for (double Z = 0.0; Z < B; Z += Hz) {
-            ui->T->setItem(G, 0, new QTableWidgetItem(QString::number(X)));
-            ui->T->setItem(G, 1, new QTableWidgetItem(QString::number(Z)));
-            ui->T->setItem(G, 2, new QTableWidgetItem(QString::number(Ts[I][J])));
+            ui->T->append(QString::number(X) + ", " + QString::number(Z) + ", " + QString::number(Ts[I][J]));
             G++; J++;
         }
         I++;
