@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     delete ui;
-    delete gaus;
 }
 
 void MainWindow::recalculate() {
@@ -109,7 +108,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         ui->pb->setValue(50);
 
         prev_Ts = Ts;
-        this->resolve_gauss(matrix, Ts);
+        this->resolve_gauss(matrix, Ts, Nx, Nz);
         ui->pb->setValue(70);
 
         rs.recalc_lambdas(Nx, Nz, Ts, lambdas);
@@ -122,19 +121,30 @@ void MainWindow::view_result(Doubles2D &Ts) {
     int Nx = ui->Nx->value(), Nz = ui->Nz->value();
     double Hx = A / Nx, Hz = B / Nz;
 
+    ui->T->append("\"x\", \"z\", \"T\"");
+
     int G = 0, I = 0, J = 0;
     for (double X = 0.0; X < A; X += Hx) {
         J = 0;
         for (double Z = 0.0; Z < B; Z += Hz) {
-            ui->T->append(QString::number(X) + ", " + QString::number(Z) + ", " + QString::number(Ts[I][J]));
+            if (I < Nx && J < Nz) {
+                ui->T->append(QString::number(X) + ", " +
+                              QString::number(Z) + ", " +
+                              QString::number(Ts[I][J]));
+            }
             G++; J++;
         }
         I++;
     }
 }
 
-void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts) throw (QString) {
-    // здесь нужно применить метод Гаусса на matrix и положить результат в Ts
-    gaus = new methodGaus(matrix);
-    //Ts = gaus->calculate();
+void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts, int Nx, int Nz) throw (QString) {
+    methodGaus gaus(matrix);
+    Doubles& solution = gaus.calculate();
+
+    for (int I = 0; I < Nx; I++) {
+        for (int J = 0; J < Nz; J++) {
+            Ts[I][J] = solution[I * Nx + J];
+        }
+    }
 }
