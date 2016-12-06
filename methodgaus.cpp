@@ -45,7 +45,7 @@ QVector<double> methodGaus::calculate()
         answers[currentRow] = matrix[currentRow][matrix[0].size()-1];
 
         for(int i = 0; i < currentRow; i++)
-            answers[i] = answers[i] - matrix[i][currentRow] * answers[currentRow];
+            matrix[i][matrix[0].size()-1] = matrix[i][matrix[0].size()-1] - matrix[i][currentRow] * answers[currentRow];
     }
 
     return answers;
