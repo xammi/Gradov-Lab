@@ -82,7 +82,8 @@ struct Resources {
         }
     }
 
-    static constexpr double EPS = 10e-5;
+    static constexpr double EPS = 10e-3;
+    static constexpr int MAX_ITERS = 1000;
 
     bool if_stop_iterations(int Nx, int Nz, Doubles2D & Ts, Doubles2D & prev_Ts) {
         if (prev_Ts.empty()) {
@@ -90,10 +91,11 @@ struct Resources {
         }
         for (int I = 0; I < Nz; I++) {
             for (int J = 0; J < Nx; J++) {
-                if (fabs(prev_Ts[I][J] - Ts[I][J]) < Resources::EPS) return false;
+                if (fabs(prev_Ts[I][J] - Ts[I][J]) > Resources::EPS)
+                    return true;
             }
         }
-        return true;
+        return false;
     }
 };
 

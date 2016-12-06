@@ -54,6 +54,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
     Doubles2D matrix;
     rs.init_matrix(Nx, Nz, matrix);
 
+    int counter = 0;
     while (rs.if_stop_iterations(Nx, Nz, Ts, prev_Ts)) {
         ui->pb->setValue(5);
 
@@ -114,6 +115,11 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
 
         rs.recalc_lambdas(Nx, Nz, Ts, lambdas);
         ui->pb->setValue(90);
+
+        counter++;
+        if (counter % Resources::MAX_ITERS == 0) {
+            break;
+        }
     }
 }
 
@@ -128,7 +134,7 @@ void MainWindow::view_result(Doubles2D &Ts) {
     for (double X = 0.0; X < A; X += Hx) {
         J = 0;
         for (double Z = 0.0; Z < B; Z += Hz) {
-            if (I < Nx && J < Nz) {
+            if (I < Nz && J < Nx) {
                 ui->T->append(QString::number(X) + ", " +
                               QString::number(Z) + ", " +
                               QString::number(Ts[I][J]));
@@ -143,9 +149,9 @@ void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts, int Nx, int N
     methodGaus gaus(matrix);
     Doubles& solution = gaus.calculate();
 
-    for (int I = 0; I < Nx; I++) {
-        for (int J = 0; J < Nz; J++) {
-            Ts[I][J] = solution[I * Nx + J];
+    for (int I = 0; I < Nz; I++) {
+        for (int J = 0; J < Nx; J++) {
+            Ts[I][J] = solution[I * Nz + J];
         }
     }
 }
