@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete gaus;
 }
 
 void MainWindow::recalculate() {
@@ -134,4 +135,6 @@ void MainWindow::view_result(Doubles2D &Ts) {
 
 void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts) throw (QString) {
     // здесь нужно применить метод Гаусса на matrix и положить результат в Ts
+    gaus = new methodGaus(matrix);
+    //Ts = gaus->calculate();
 }

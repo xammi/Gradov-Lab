@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "resources.h"
+#include "methodgaus.h"
 
 namespace Ui {
     class MainWindow;
@@ -26,6 +27,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Resources rs;
+    methodGaus* gaus;
 };
 
 #endif // MAINWINDOW_H
