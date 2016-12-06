@@ -15,6 +15,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::recalculate() {
     ui->T->setText("");
+    ui->error->setText("");
     ui->pb->setValue(0);
     try {
         Doubles2D Ts;
