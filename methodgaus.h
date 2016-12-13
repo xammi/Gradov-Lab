@@ -7,18 +7,18 @@ class methodGaus
 {
 
 private:
-    QVector<QVector<double>> & matrix;
+    QVector<QVector<double>> matrix;
     QVector<double> answers;
-    const double eps = 0.00001;
+    const double eps = 10e-12;
 
 public:
-    methodGaus(QVector<QVector<double>> & matrix) : matrix(matrix)
+    methodGaus(QVector<QVector<double>> matrix) : matrix(matrix)
     {
         answers.resize(matrix.size());
     }
 
 public:
-   QVector<double>& calculate() throw (QString);
+   QVector<double> calculate() throw (QString);
 
 private:
    int  searchMaxInCurrentColumn(int currentRow);

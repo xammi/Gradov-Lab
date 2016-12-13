@@ -64,14 +64,6 @@ struct Resources {
         Doubles matrix_row;
         matrix_row.fill(start_val, dim + 1);
         matrix.fill(matrix_row, dim);
-
-        for (int I = 0; I < dim; I++) {
-            matrix[I][I] = 1.0;
-        }
-        for (int I = Nx; I < dim; I++) {
-            matrix[I][I - Nx] = -1.0;
-            matrix[I - Nx][I] = -1.0;
-        }
     }
 
     void recalc_lambdas(int Nx, int Nz, const Doubles2D & Ts, Doubles2D & lambdas) throw (QString) {
@@ -82,8 +74,8 @@ struct Resources {
         }
     }
 
-    static constexpr double EPS = 10e-3;
-    static constexpr int MAX_ITERS = 1000;
+    static constexpr double EPS = 10e-7;
+    static constexpr int MAX_ITERS = 100000;
 
     bool if_stop_iterations(int Nx, int Nz, Doubles2D & Ts, Doubles2D & prev_Ts) {
         if (prev_Ts.empty()) {
