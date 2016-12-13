@@ -147,6 +147,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         ui->pb->setValue(90);
 
         counter++;
+        qDebug() << counter;
         if (counter % Resources::MAX_ITERS == 0) {
             break;
         }

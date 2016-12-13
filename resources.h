@@ -74,8 +74,8 @@ struct Resources {
         }
     }
 
-    static constexpr double EPS = 10e-7;
-    static constexpr int MAX_ITERS = 100000;
+    static constexpr double EPS = 10e-5;
+    static constexpr int MAX_ITERS = 50;
 
     bool if_stop_iterations(int Nx, int Nz, Doubles2D & Ts, Doubles2D & prev_Ts) {
         if (prev_Ts.empty()) {
