@@ -61,33 +61,29 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
 
         // вычисление 1-го краевого условия (T[0][J] - T[1][J] = K1[J])
         for (int J = 0; J < Nx; J++) {
-            double K1 = Hz * Ft / lambdas[0][J];
-            matrix[J][dim] = K1;
+            matrix[J][dim] = Hz * Ft / lambdas[0][J];
         }
 
         // вычисление 2-го краевого условия (K1[I] * T[I][0] - T[I][1] = K2[I])
-        for (int I = 1; I < Nz - 1; I += 2) {
-            double K1 = -alpha * Hx / lambdas[I][0] * U0;
-            matrix[Nx*I][dim] = K1;
+        for (int I = 1; I < Nz_1; I++) {
+            matrix[I*Nx][dim] = -alpha * Hx / lambdas[I][0] * U0;
         }
 
         // вычисление 3-го краевого условия (T[I][Nx - 1] - K1[I] * T[I][Nx] = K2[I])
-        for (int I = 1; I < Nz - 1; I += 2) {
-            double K1 = -alpha * Hx / lambdas[I][Nx - 1] * U0;
-            matrix[Nx*I + Nx_1][dim] = K1;
+        for (int I = 1; I < Nz_1; I++) {
+            matrix[(I + 1)*Nx - 1][dim] = -alpha * Hx / lambdas[I][Nx_1] * U0;
         }
 
         // вычисление 4-го краевого условия (T[Nz - 1][J] - K1[J] * T[Nz][J] = K2[J])
         for (int J = 1; J < Nx; J++) {
-            double K1 = -alpha * Hz / lambdas[Nz - 1][J] * U0;
-            matrix[Nz_1*Nx + J][dim] = K1;
+            matrix[Nz_1*Nx + J][dim] = -alpha * Hz / lambdas[Nz_1][J] * U0;
         }
         ui->pb->setValue(20);
 
         // заполнение правой части
-        for (int I = 1; I < Nz - 1; I++) {
-            for (int J = 1; J < Nx - 1; J++) {
-                matrix[I * Nx + J][dim] = -rs.calc_f(F0, Hz * I, Ts[I][J]);
+        for (int I = 1; I < Nz_1; I++) {
+            for (int J = 1; J < Nx_1; J++) {
+                matrix[I*Nx + J][dim] = -rs.calc_f(F0, Hz * I, Ts[I][J]);
             }
         }
         ui->pb->setValue(40);
@@ -96,35 +92,35 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
             matrix[J][J] = 1;
             matrix[J][Nx + J] = -1;
         }
-        for (int I = 1; I < Nz - 1; I++) {
+        for (int I = 1; I < Nz_1; I++) {
             matrix[I*Nx][I*Nx] = 1 - alpha * Hx / lambdas[I][0];
             matrix[I*Nx][I*Nx + 1] = -1;
         }
-        for (int I = 1; I < Nz - 1; I++) {
+        for (int I = 1; I < Nz_1; I++) {
             matrix[I*Nx + Nx_1][I*Nx + Nx_1 - 1] = 1;
-            matrix[I*Nx + Nx_1][I*Nx + Nx_1] = 1 + alpha * Hx / lambdas[I][Nx_1];
+            matrix[I*Nx + Nx_1][I*Nx + Nx_1] = -(1 + alpha * Hx / lambdas[I][Nx_1]);
         }
 
         // заполнение диагоналей в центре
-        for (int I = 1; I < Nz - 1; I++) {
-            for (int J = 1; J < Nx - 1; J++) {
+        for (int I = 1; I < Nz_1; I++) {
+            for (int J = 1; J < Nx_1; J++) {
                 double bottom_L = (lambdas[I][J] + lambdas[I][J - 1]) / 2;
                 double top_L = (lambdas[I][J] + lambdas[I][J + 1]) / 2;
                 double left_L = (lambdas[I][J] + lambdas[I - 1][J]) / 2;
                 double right_L = (lambdas[I][J] + lambdas[I + 1][J]) / 2;
 
                 matrix[I*Nx + J][(I - 1)*Nx + J] = left_L / Hz2;
-                matrix[I*Nx + J][I*Nx + J - 1] = bottom_L / Hx2;
+                matrix[I*Nx + J][I*Nx + (J - 1)] = bottom_L / Hx2;
 
                 matrix[I*Nx + J][I*Nx + J] = -((top_L + bottom_L) / Hx2 + (left_L + right_L) / Hz2);
 
-                matrix[I*Nx + J][I*Nx + J + 1] = top_L / Hx2;
+                matrix[I*Nx + J][I*Nx + (J + 1)] = top_L / Hx2;
                 matrix[I*Nx + J][(I + 1)*Nx + J] = right_L / Hz2;
             }
         }
         for (int J = 0; J < Nx; J++) {
-            matrix[Nz_1*Nx + J][Nz_1*Nx_1 + J] = 1;
-            matrix[Nz_1*Nx + J][Nz_1*Nx + J] = 1 + alpha * Hz / lambdas[Nz_1][J];
+            matrix[Nz_1*Nx + J][(Nz_1 - 1)*Nx + J] = 1;
+            matrix[Nz_1*Nx + J][Nz_1*Nx + J] = -(1 + alpha * Hz / lambdas[Nz_1][J]);
         }
 
         ui->pb->setValue(50);
