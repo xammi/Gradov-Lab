@@ -27,20 +27,20 @@ struct Resources {
 
     // Коэффициент теплопроводности
     double calc_lambda(double T) {
-        return 1.34e-1 * (1 + 4.35e-4 * T);
+        return 0.134e1 * (1 + 4.35e-4 * T);
     }
 
     // Коэффициент преломления
     constexpr static double REFRACTION_F = 1.46;
 
     // Коэффициент поглощения - интерполируется по таблице
-    double calc_absorb(double X) throw (QString) {
-        return Interpolation().forward(X, 4, absorb_nodes);
+    double calc_absorb(double T) throw (QString) {
+        return Interpolation().forward(T, 4, absorb_nodes);
     }
 
     // Функция f из условия
-    double calc_f(double F0, double Z, double X) throw (QString) {
-        return F0 * exp(-calc_absorb(X) * Z);
+    double calc_f(double F0, double Z, double T) throw (QString) {
+        return F0 * exp(-calc_absorb(T) * Z);
     }
 
     void init_lambdas(double U0, int Nx, int Nz, Doubles2D & lambdas) throw (QString) {
@@ -51,7 +51,7 @@ struct Resources {
     }
 
     void init_Ts(int Nx, int Nz, Doubles2D & Ts) {
-        double start_T = 0.0;
+        double start_T = 293.0;
         Doubles Ts_row;
         Ts_row.fill(start_T, Nx);
         Ts.fill(Ts_row, Nz);

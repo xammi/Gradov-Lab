@@ -67,29 +67,28 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
 
         // вычисление 2-го краевого условия (K1[I] * T[I][0] - T[I][1] = K2[I])
         for (int I = 1; I < Nz - 1; I += 2) {
-            double K1 = 1 - alpha * Hx / lambdas[I][0];
-            double K2 = -alpha * Hx / lambdas[I][0] * U0;
-            matrix[Nx * I][dim] = K2;
+            double K1 = -alpha * Hx / lambdas[I][0] * U0;
+            matrix[Nx * I][dim] = K1;
         }
 
         // вычисление 3-го краевого условия (T[I][Nx - 1] - K1[I] * T[I][Nx] = K2[I])
         for (int I = 1; I < Nz - 1; I += 2) {
-            double K1 = 1 + alpha * Hx / lambdas[I][Nx - 1];
-            double K2 = -alpha * Hx / lambdas[I][Nx - 1] * U0;
-            matrix[Nx + Nx * I][dim] = K2;
+            double K1 = -alpha * Hx / lambdas[I][Nx - 1] * U0;
+            matrix[Nx + Nx * I][dim] = K1;
         }
 
         // вычисление 4-го краевого условия (T[Nz - 1][J] - K1[J] * T[Nz][J] = K2[J])
         for (int J = 0; J < Nx; J++) {
-            double K1 = 1 + alpha * Hz / lambdas[Nz - 1][J];
-            double K2 = -alpha * Hz / lambdas[Nz - 1][J] * U0;
-            matrix[Nz_1*Nx + J][dim] = K2;
+            double K1 = -alpha * Hz / lambdas[Nz - 1][J] * U0;
+            matrix[Nz_1*Nx + J][dim] = K1;
         }
         ui->pb->setValue(20);
 
         // заполнение правой части
-        for (int I = 1, J = 1; I < Nz - 1; I++, J++) {
-            matrix[I * Nx + J][dim] = rs.calc_f(F0, Hz * I, Hx * J);
+        for (int I = 1; I < Nz - 1; I++) {
+            for (int J = 1; J < Nx - 1; J++) {
+                matrix[I * Nx + J][dim] = -rs.calc_f(F0, Hz * I, Ts[I][J]);
+            }
         }
         ui->pb->setValue(40);
 

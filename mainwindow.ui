@@ -82,7 +82,7 @@
            <double>999.990000000000009</double>
           </property>
           <property name="value">
-           <double>20.000000000000000</double>
+           <double>0.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -153,7 +153,7 @@
            <double>999.990000000000009</double>
           </property>
           <property name="value">
-           <double>1.000000000000000</double>
+           <double>5.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -260,7 +260,7 @@
            <number>10000</number>
           </property>
           <property name="value">
-           <number>5</number>
+           <number>4</number>
           </property>
          </widget>
         </item>
@@ -270,7 +270,7 @@
            <number>10000</number>
           </property>
           <property name="value">
-           <number>5</number>
+           <number>4</number>
           </property>
           <property name="displayIntegerBase">
            <number>10</number>
