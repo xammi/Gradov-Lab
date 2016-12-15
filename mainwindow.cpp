@@ -95,6 +95,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         for (int J = 0; J < Nx; J++) {
             matrix[J][J] = 1;
             matrix[J][Nx + J] = -1;
+            matrix[Nx + J][J] = -1;
         }
 
         // заполнение диагоналей в центре
@@ -134,6 +135,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         for (int J = 0; J < Nx; J++) {
             matrix[Nz_1*Nx + J][Nz_1*Nx_1 + J] = 1;
             matrix[Nz_1*Nx + J][Nz_1*Nx + J] = 1 + alpha * Hz / lambdas[Nz_1][J];
+            matrix[(Nz-2)*Nx + J][Nz_1*Nx + J] = 1 + alpha * Hz / lambdas[Nz_1][J];
         }
 
         ui->pb->setValue(50);
@@ -161,12 +163,12 @@ void MainWindow::view_result(Doubles2D &Ts) {
     ui->T->append("\"x\", \"z\", \"T\"");
 
     int G = 0, I = 0, J = 0;
-    for (double X = 0.0; X < A; X += Hx) {
+    for (double Z = 0.0; Z < A; Z += Hz) {
         J = 0;
-        for (double Z = 0.0; Z < B; Z += Hz) {
+        for (double X = 0.0; X < B; X += Hx) {
             if (I < Nz && J < Nx) {
-                ui->T->append(QString::number(X) + ", " +
-                              QString::number(Z) + ", " +
+                ui->T->append(QString::number(Z) + ", " +
+                              QString::number(X) + ", " +
                               QString::number(Ts[I][J]));
             }
             G++; J++;
