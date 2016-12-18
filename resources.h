@@ -27,7 +27,7 @@ struct Resources {
 
     // Коэффициент теплопроводности
     double calc_lambda(double T) {
-        return 0.0134e2 * (1 + 0.000435 * T);
+        return 0.0134e1 * (1 + 0.000435 * T);
     }
 
     // Коэффициент преломления

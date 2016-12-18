@@ -93,12 +93,16 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
             matrix[J][Nx + J] = -1;
         }
         for (int I = 1; I < Nz_1; I++) {
-            matrix[I*Nx][I*Nx] = 1 - alpha * Hx / lambdas[I][0];
+            matrix[I*Nx][I*Nx] = 1 + alpha * Hx / lambdas[I][0];
             matrix[I*Nx][I*Nx + 1] = -1;
         }
         for (int I = 1; I < Nz_1; I++) {
             matrix[I*Nx + Nx_1][I*Nx + Nx_1 - 1] = 1;
             matrix[I*Nx + Nx_1][I*Nx + Nx_1] = -(1 + alpha * Hx / lambdas[I][Nx_1]);
+        }
+        for (int J = 0; J < Nx; J++) {
+            matrix[Nz_1*Nx + J][(Nz_1 - 1)*Nx + J] = 1;
+            matrix[Nz_1*Nx + J][Nz_1*Nx + J] = -(1 + alpha * Hz / lambdas[Nz_1][J]);
         }
 
         // заполнение диагоналей в центре
@@ -117,10 +121,6 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
                 matrix[I*Nx + J][I*Nx + (J + 1)] = top_L / Hx2;
                 matrix[I*Nx + J][(I + 1)*Nx + J] = right_L / Hz2;
             }
-        }
-        for (int J = 0; J < Nx; J++) {
-            matrix[Nz_1*Nx + J][(Nz_1 - 1)*Nx + J] = 1;
-            matrix[Nz_1*Nx + J][Nz_1*Nx + J] = -(1 + alpha * Hz / lambdas[Nz_1][J]);
         }
 
         ui->pb->setValue(50);
