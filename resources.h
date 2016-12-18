@@ -27,7 +27,7 @@ struct Resources {
 
     // Коэффициент теплопроводности
     double calc_lambda(double T) {
-        return 0.0134e1 * (1 + 0.000435 * T);
+        return 0.0134 * (1 + 0.000435 * T);
     }
 
     // Коэффициент преломления
@@ -75,7 +75,7 @@ struct Resources {
     }
 
     static constexpr double EPS = 10e-4;
-    static constexpr int MAX_ITERS = 31;
+    static constexpr int MAX_ITERS = 100;
 
     bool if_stop_iterations(int Nx, int Nz, Doubles2D & Ts, Doubles2D & prev_Ts) {
         if (prev_Ts.empty()) {

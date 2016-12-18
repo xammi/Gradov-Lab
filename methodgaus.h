@@ -9,7 +9,7 @@ class methodGaus
 private:
     QVector<QVector<double>> matrix;
     QVector<double> answers;
-    const double eps = 1e-4;
+    const double eps = 1e-16;
 
 public:
     methodGaus(QVector<QVector<double>> matrix) : matrix(matrix)
