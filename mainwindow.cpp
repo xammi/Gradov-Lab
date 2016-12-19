@@ -1,5 +1,34 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <time.h>
+
+typedef struct timespec Time;
+
+Time get_current_time() {
+    Time gettime_now;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, & gettime_now);
+    return gettime_now;
+}
+
+void get_end_time(Time start_time) {
+    Time end_time = get_current_time();
+    double sec = double(end_time.tv_sec - start_time.tv_sec);
+    double nsec = double(end_time.tv_nsec - start_time.tv_nsec) / 10e9;
+    sec -= nsec;
+
+    int hours = qFloor(sec) / 3600;
+    int minutes = (qFloor(sec) % 3600) / 60;
+    int seconds = (qFloor(sec) % 3600) % 60;
+    int millis = qFloor(sec * 1000) % 1000;
+
+    QString timing = "Затраченное время:";
+    if (hours > 0) timing += QString::number(hours) + " часов ";
+    if (minutes > 0) timing += QString::number(minutes) + " минут ";
+    if (seconds > 0) timing += QString::number(seconds) + "." + QString::number(millis) + " секунд";
+
+    qDebug() << timing;
+}
+//-------------------------------------------------------------------------------------------------
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -56,6 +85,7 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
     Doubles2D matrix;
     rs.init_matrix(Nx, Nz, matrix);
 
+    Time start_time = get_current_time();
     int counter = 0;
     while (rs.if_stop_iterations(Nx, Nz, Ts, prev_Ts)) {
         // вычисление 1-го краевого условия (T[0][J] - T[1][J] = K1[J])
@@ -131,11 +161,35 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
         rs.recalc_lambdas(Nx, Nz, Ts, lambdas);
 
         counter++;
-        qDebug() << counter;
+        qDebug() << "Итерация №:" << counter;
         if (counter % Resources::MAX_ITERS == 0) {
             break;
         }
     }
+    get_end_time(start_time);
+}
+
+void MainWindow::relaxation_method(Doubles2D & Ts) throw (QString) {
+    double A = ui->A->value(), B = ui->B->value();
+    int Nx = ui->Nx->value(), Nz = ui->Nz->value();
+    double Ft = ui->Ft->value(), F0 = ui->F0->value();
+    double U0 = ui->U0->value(), alpha = ui->alpha->value();
+
+    if (Nx == 0) {
+        throw "Количество узлов сетки по X равно 0";
+    }
+    if (Nz == 0) {
+        throw "Количество узлов сетки по Z равно 0";
+    }
+
+    double Hx = A / Nx, Hz = B / Nz;
+    double Hx2 = Hx * Hx, Hz2 = Hz * Hz;
+
+    Time start_time = get_current_time();
+
+    // here relaxation method
+
+    get_end_time(start_time);
 }
 
 void MainWindow::view_result(Doubles2D &Ts) {
