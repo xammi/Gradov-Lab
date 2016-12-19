@@ -3,7 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    gaus(new methodGaus())
 {
     ui->setupUi(this);
     connect(ui->btn_recalc, SIGNAL(pressed()), SLOT(recalculate()));
@@ -11,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete gaus;
 }
 
 void MainWindow::recalculate() {
@@ -40,6 +42,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
     if (Nz == 0) {
         throw "Количество узлов сетки по Z равно 0";
     }
+    gaus->initialize(Nx, Nz);
 
     double Hx = A / Nx, Hz = B / Nz;
     double Hx2 = Hx * Hx, Hz2 = Hz * Hz;
@@ -65,7 +68,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         }
 
         // вычисление 2-го краевого условия (K1[I] * T[I][0] - T[I][1] = K2[I])
-        for (int I = 1; I < Nz_1; I++) {
+        for (int I = 1; I < Nz; I++) {
             matrix[I*Nx][dim] = -alpha * Hx / lambdas[I][0] * U0;
         }
 
@@ -163,8 +166,8 @@ void MainWindow::view_result(Doubles2D &Ts) {
 }
 
 void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts, int Nx, int Nz) throw (QString) {
-    methodGaus gaus(matrix);
-    Doubles solution = gaus.calculate();
+    gaus->set_matrix(matrix);
+    Doubles & solution = gaus->calculate();
 
     for (int I = 0; I < Nz; I++) {
         for (int J = 0; J < Nx; J++) {

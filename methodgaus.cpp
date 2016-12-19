@@ -1,7 +1,7 @@
 #include "methodgaus.h"
 #include <qmath.h>
 
-QVector<double> methodGaus::calculate()
+QVector<double> & methodGaus::calculate()
     throw (QString)
 {
     int currentRow = 0;
