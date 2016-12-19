@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "resources.h"
-#include "methodgaus.h"
+#include "gauss.h"
 
 namespace Ui {
     class MainWindow;
@@ -20,14 +20,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void recalculate_action(Doubles2D & Ts) throw (QString);
-    void resolve_gauss(Doubles2D & matrix, Doubles2D & Ts, int Nx, int Nz) throw (QString) ;
+    void straight_method(Doubles2D & Ts) throw (QString);
+    void relaxation_method(Doubles2D & Ts) throw (QString);
     void view_result(Doubles2D & Ts);
 
 private:
     Ui::MainWindow *ui;
     Resources rs;
-    methodGaus* gaus;
+    GaussResolver* gauss;
 };
 
 #endif // MAINWINDOW_H

@@ -74,20 +74,23 @@ struct Resources {
         }
     }
 
-    static constexpr double EPS = 10e-5;
-    static constexpr int MAX_ITERS = 100;
+    static constexpr double EPS = 10e-4;
+    static constexpr int MAX_ITERS = 30;
 
     bool if_stop_iterations(int Nx, int Nz, Doubles2D & Ts, Doubles2D & prev_Ts) {
         if (prev_Ts.empty()) {
             return true;
         }
+        double maxDiff = -1, diff;
         for (int I = 0; I < Nz; I++) {
             for (int J = 0; J < Nx; J++) {
-                if (fabs(prev_Ts[I][J] - Ts[I][J]) > Resources::EPS)
-                    return true;
+                diff = fabs(prev_Ts[I][J] - Ts[I][J]);
+                if (maxDiff < diff)
+                    maxDiff = diff;
             }
         }
-        return false;
+        qDebug() << "Наибольшая разница Ts:" << maxDiff;
+        return maxDiff > Resources::EPS;
     }
 };
 

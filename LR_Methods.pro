@@ -14,13 +14,13 @@ CONFIG += c++11
 
 
 SOURCES += main.cpp\
-    mainwindow.cpp\
     interpolation.cpp \
-    methodgaus.cpp
+    gauss.cpp \
+    mainwindow.cpp
 
 HEADERS  += mainwindow.h\
             interpolation.h \
     resources.h \
-    methodgaus.h
+    gauss.h
 
 FORMS    += mainwindow.ui

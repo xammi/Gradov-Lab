@@ -4,7 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    gaus(new methodGaus())
+    gauss(new GaussResolver())
 {
     ui->setupUi(this);
     connect(ui->btn_recalc, SIGNAL(pressed()), SLOT(recalculate()));
@@ -12,17 +12,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     delete ui;
-    delete gaus;
+    delete gauss;
 }
 
 void MainWindow::recalculate() {
     ui->T->setText("");
     ui->error->setText("");
-    ui->pb->setValue(0);
     try {
         Doubles2D Ts;
-        this->recalculate_action(Ts);
-        ui->pb->setValue(100);
+        this->straight_method(Ts);
         this->view_result(Ts);
     }
     catch (QString error) {
@@ -30,7 +28,7 @@ void MainWindow::recalculate() {
     }
 }
 
-void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
+void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
     double A = ui->A->value(), B = ui->B->value();
     int Nx = ui->Nx->value(), Nz = ui->Nz->value();
     double Ft = ui->Ft->value(), F0 = ui->F0->value();
@@ -42,7 +40,7 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
     if (Nz == 0) {
         throw "Количество узлов сетки по Z равно 0";
     }
-    gaus->initialize(Nx, Nz);
+    gauss->initialize(Nx, Nz);
 
     double Hx = A / Nx, Hz = B / Nz;
     double Hx2 = Hx * Hx, Hz2 = Hz * Hz;
@@ -60,8 +58,6 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
 
     int counter = 0;
     while (rs.if_stop_iterations(Nx, Nz, Ts, prev_Ts)) {
-        ui->pb->setValue(5);
-
         // вычисление 1-го краевого условия (T[0][J] - T[1][J] = K1[J])
         for (int J = 0; J < Nx; J++) {
             matrix[J][dim] = Hz * Ft / lambdas[0][J];
@@ -81,7 +77,6 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
         for (int J = 1; J < Nx; J++) {
             matrix[Nz_1*Nx + J][dim] = -alpha * Hz / lambdas[Nz_1][J] * U0;
         }
-        ui->pb->setValue(20);
 
         // заполнение правой части
         for (int I = 1; I < Nz_1; I++) {
@@ -89,7 +84,6 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
                 matrix[I*Nx + J][dim] = -rs.calc_f(F0, Hz * I, Ts[I][J]);
             }
         }
-        ui->pb->setValue(40);
 
         for (int J = 0; J < Nx; J++) {
             matrix[J][J] = 1;
@@ -126,14 +120,15 @@ void MainWindow::recalculate_action(Doubles2D & Ts) throw (QString) {
             }
         }
 
-        ui->pb->setValue(50);
-
         prev_Ts = Ts;
-        this->resolve_gauss(matrix, Ts, Nx, Nz);
-        ui->pb->setValue(70);
-
+        gauss->set_matrix(matrix);
+        Doubles & solution = gauss->calculate();
+        for (int I = 0; I < Nz; I++) {
+            for (int J = 0; J < Nx; J++) {
+                Ts[I][J] = solution[I * Nz + J];
+            }
+        }
         rs.recalc_lambdas(Nx, Nz, Ts, lambdas);
-        ui->pb->setValue(90);
 
         counter++;
         qDebug() << counter;
@@ -162,16 +157,5 @@ void MainWindow::view_result(Doubles2D &Ts) {
             G++; J++;
         }
         I++;
-    }
-}
-
-void MainWindow::resolve_gauss(Doubles2D & matrix, Doubles2D & Ts, int Nx, int Nz) throw (QString) {
-    gaus->set_matrix(matrix);
-    Doubles & solution = gaus->calculate();
-
-    for (int I = 0; I < Nz; I++) {
-        for (int J = 0; J < Nx; J++) {
-            Ts[I][J] = solution[I * Nz + J];
-        }
     }
 }
