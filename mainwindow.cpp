@@ -24,7 +24,8 @@ void get_end_time(Time start_time) {
     QString timing = "Затраченное время: ";
     if (hours > 0) timing += QString::number(hours) + " часов ";
     if (minutes > 0) timing += QString::number(minutes) + " минут ";
-    if (seconds > 0) timing += QString::number(seconds) + "." + QString::number(millis) + " секунд";
+    if (seconds > 0) timing += QString::number(seconds) + " секунд ";
+    if (millis > 0) timing += QString::number(millis) + " ms";
 
     qDebug() << timing;
 }
@@ -178,7 +179,7 @@ void MainWindow::relaxation_method(Doubles2D & Ts) throw (QString) {
     int Nx = ui->Nx->value(), Nz = ui->Nz->value();
     double Ft = ui->Ft->value(), F0 = ui->F0->value();
     double U0 = ui->U0->value(), alpha = ui->alpha->value();
-    double tau = 0.01;
+    double tau = 10e-5;
 
     if (Nx == 0) {
         throw "Количество узлов сетки по X равно 0";
@@ -310,9 +311,8 @@ void MainWindow::relaxation_method(Doubles2D & Ts) throw (QString) {
         rs.recalc_lambdas(Nx, Nz, Ts, lambdas);
 
         counter++;
-        qDebug() << "Итерация №:" << counter;
-        if (counter % Resources::MAX_ITERS == 0) {
-            break;
+        if (counter % 100 == 0) {
+            qDebug() << "Итерация №:" << counter;
         }
     }
     get_end_time(start_time);
