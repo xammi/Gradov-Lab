@@ -20,14 +20,15 @@ void get_end_time(Time start_time) {
     int minutes = (qFloor(sec) % 3600) / 60;
     int seconds = (qFloor(sec) % 3600) % 60;
     int millis = qFloor(sec * 1000) % 1000;
+    int nanos = qFloor(sec * 10e9) % 1000000000;
 
     QString timing = "Затраченное время: ";
     if (hours > 0) timing += QString::number(hours) + " часов ";
     if (minutes > 0) timing += QString::number(minutes) + " минут ";
     if (seconds > 0) timing += QString::number(seconds) + " секунд ";
-    if (millis > 0) timing += QString::number(millis) + " ms";
+    if (millis > 0) timing += QString::number(millis) + " ms ";
 
-    qDebug() << timing;
+    qDebug() << timing << sec;
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gauss(new GaussResolver())
 {
     ui->setupUi(this);
+    pool = QThreadPool::globalInstance();
     connect(ui->btn_recalc, SIGNAL(pressed()), SLOT(recalculate()));
 }
 
@@ -90,9 +92,11 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
     Doubles2D matrix;
     rs.init_matrix(Nx, Nz, matrix);
 
-    Time start_time = get_current_time();
     int counter = 0;
-    while (rs.if_stop_iterations(Nx, Nz, Ts, prev_Ts)) {
+
+    Task filling_thread_right (
+                [&matrix, &lambdas, &Ts, Nx, Nz, Nx_1, Nz_1, U0, Hx, Hz, Ft, dim, alpha, F0, this] ()
+    {
         // вычисление 1-го краевого условия (T[0][J] - T[1][J] = K1[J])
         for (int J = 0; J < Nx; J++) {
             matrix[J][dim] = Hz * Ft / lambdas[0][J];
@@ -119,7 +123,8 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
                 matrix[I*Nx + J][dim] = -rs.calc_f(F0, Hz * I, Ts[I][J]);
             }
         }
-
+    });
+    Task filling_thread_edge ([&matrix, &lambdas, Nx, Nz, Nx_1, Nz_1, alpha, U0, Hx, Hz] () {
         for (int J = 0; J < Nx; J++) {
             matrix[J][J] = 1;
             matrix[J][Nx + J] = -1;
@@ -136,7 +141,8 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
             matrix[Nz_1*Nx + J][(Nz_1 - 1)*Nx + J] = 1;
             matrix[Nz_1*Nx + J][Nz_1*Nx + J] = -(1 + alpha * Hz / lambdas[Nz_1][J]);
         }
-
+    });
+    Task filling_thread_main ([&matrix, &lambdas, Nx, Nz, Nx_1, Nz_1, Hx2, Hz2] () {
         // заполнение диагоналей в центре
         for (int I = 1; I < Nz_1; I++) {
             for (int J = 1; J < Nx_1; J++) {
@@ -154,6 +160,14 @@ void MainWindow::straight_method(Doubles2D & Ts) throw (QString) {
                 matrix[I*Nx + J][(I + 1)*Nx + J] = right_L / Hz2;
             }
         }
+    });
+
+    Time start_time = get_current_time();
+    while (rs.if_stop_iterations(Nx, Nz, Ts, prev_Ts)) {
+        pool->start(&filling_thread_right);
+        pool->start(&filling_thread_edge);
+        pool->start(&filling_thread_main);
+        pool->waitForDone();
 
         prev_Ts = Ts;
         gauss->set_matrix(matrix);

@@ -401,12 +401,12 @@
         </property>
         <item>
          <property name="text">
-          <string>Установления + Прогонки</string>
+          <string>Прямой + Гаусса</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Прямой + Гаусса</string>
+          <string>Установления + Прогонки</string>
          </property>
         </item>
        </widget>

@@ -48,6 +48,10 @@ struct Resources {
         Doubles lambda_row;
         lambda_row.fill(start_lambda, Nx);
         lambdas.fill(lambda_row, Nz);
+        lambdas.setSharable(false);
+        for (int I = 0; I < lambdas.size(); I++) {
+            lambdas[I].setSharable(false);
+        }
     }
 
     void init_Ts(int Nx, int Nz, Doubles2D & Ts) {
@@ -55,15 +59,22 @@ struct Resources {
         Doubles Ts_row;
         Ts_row.fill(start_T, Nx);
         Ts.fill(Ts_row, Nz);
+        Ts.setSharable(false);
+        for (int I = 0; I < Ts.size(); I++) {
+            Ts[I].setSharable(false);
+        }
     }
 
     void init_matrix(int Nx, int Nz, Doubles2D & matrix) {
         double start_val = 0.0;
         int dim = Nx * Nz;
-
         Doubles matrix_row;
         matrix_row.fill(start_val, dim + 1);
         matrix.fill(matrix_row, dim);
+        matrix.setSharable(false);
+        for (int I = 0; I < matrix.size(); I++) {
+            matrix[I].setSharable(false);
+        }
     }
 
     void recalc_lambdas(int Nx, int Nz, const Doubles2D & Ts, Doubles2D & lambdas) throw (QString) {

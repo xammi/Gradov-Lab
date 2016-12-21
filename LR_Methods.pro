@@ -21,6 +21,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h\
             interpolation.h \
     resources.h \
-    gauss.h
+    gauss.h \
+    task.h
 
 FORMS    += mainwindow.ui

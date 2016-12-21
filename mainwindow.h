@@ -2,8 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThreadPool>
 #include "resources.h"
 #include "gauss.h"
+#include "task.h"
 
 namespace Ui {
     class MainWindow;
@@ -28,6 +30,7 @@ private:
     Ui::MainWindow *ui;
     Resources rs;
     GaussResolver* gauss;
+    QThreadPool* pool;
 };
 
 #endif // MAINWINDOW_H
