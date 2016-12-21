@@ -94,15 +94,19 @@ void GaussResolver::forward_gauss() {
     for (int k = 0,i,j,im; k < dim - 1; k++) {
         im = k;
         for (i = k + 1; i < dim; i++) {
-            if (fabs(matrix[im][k]) < fabs(matrix[i][k])) {
-                im = i;
+            if (matrix[i][k] != 0) {
+                if (fabs(matrix[im][k]) < fabs(matrix[i][k])) {
+                    im = i;
+                }
             }
         }
         if (im != k) {
             for (j = 0; j < dim; j++) {
-                v = matrix[im][j];
-                matrix[im][j] = matrix[k][j];
-                matrix[k][j] = v;
+                if (matrix[im][j] != matrix[k][j]) {
+                    v = matrix[im][j];
+                    matrix[im][j] = matrix[k][j];
+                    matrix[k][j] = v;
+                }
             }
             v = matrix[im][dim];
             matrix[im][dim] = matrix[k][dim];
@@ -111,11 +115,16 @@ void GaussResolver::forward_gauss() {
         for (i = k + 1; i < dim; i++) {
             v = 1.0 * matrix[i][k] / matrix[k][k];
             matrix[i][k] = 0;
-            matrix[i][dim] = matrix[i][dim] - v * matrix[k][dim];
-            if (v != 0)
+            if (matrix[k][dim] != 0) {
+                matrix[i][dim] = matrix[i][dim] - v * matrix[k][dim];
+            }
+            if (v != 0) {
                 for (j = k + 1; j < dim; j++) {
-                    matrix[i][j] = matrix[i][j] - v * matrix[k][j];
+                    if (matrix[k][j] != 0) {
+                        matrix[i][j] = matrix[i][j] - v * matrix[k][j];
+                    }
                 }
+            }
         }
     }
 }
@@ -126,7 +135,9 @@ void GaussResolver::backward_gauss() {
     for (int i = dim - 2, j; 0 <= i; i--) {
         s = 0;
         for (j = i + 1; j < dim; j++) {
-            s = s + matrix[i][j] * answers[j];
+            if (matrix[i][j] != 0) {
+                s = s + matrix[i][j] * answers[j];
+            }
         }
         answers[i] = 1.0 * (matrix[i][dim] - s) / matrix[i][i];
     }
